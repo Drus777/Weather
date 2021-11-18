@@ -15,11 +15,12 @@ protocol MainViewProtocol: AnyObject {
 protocol MainViewPresenterProtocol: AnyObject {
   var weather: WeatherResponce? { get set }
   
-  func getWeather()
+  func getWeather(lat: String, lon: String)
   init(view: MainViewProtocol, networkService: NetworkServiceProtocol)
 }
 
 class MainViewPresenter: MainViewPresenterProtocol {
+  
   weak var view: MainViewProtocol?
   let networkService: NetworkServiceProtocol!
   var weather: WeatherResponce?
@@ -27,11 +28,11 @@ class MainViewPresenter: MainViewPresenterProtocol {
   required init(view: MainViewProtocol, networkService: NetworkServiceProtocol) {
     self.view = view
     self.networkService = networkService
-    getWeather()
   }
   
-  func getWeather() {
-    networkService.getWeather { [weak self] result in
+  func getWeather(lat: String, lon: String) {
+    
+    networkService.getWeather(lat: lat, lon: lon) {  [weak self] result in
       guard let self = self else { return }
       
       switch result {
@@ -41,7 +42,8 @@ class MainViewPresenter: MainViewPresenterProtocol {
       case .failure(let error):
         self.view?.failure(error: error)
       }
-      
-    }
+      }
+
   }
+  
 }

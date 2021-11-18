@@ -6,26 +6,45 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class MainVC: UIViewController {
   
   @IBOutlet private weak var tableView: UITableView!
   
   var presenter: MainViewPresenterProtocol!
+  let locationManager = CLLocationManager()
+  var currentLocation: CLLocation?
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+    setupLocation()
     setupTableView()
   }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    getWeatherWithLocation()
+  }
+  
+  
+  
   
   private func setupTableView() {
     tableView.register(UINib(nibName: CurrentWeatherTableViewCell.cellName, bundle: nil), forCellReuseIdentifier: CurrentWeatherTableViewCell.cellName)
     
     tableView.dataSource = self
     tableView.delegate = self
-    
   }
+  
+  private func getWeatherWithLocation() {
+    guard let lat = currentLocation?.coordinate.latitude,
+          let lon = currentLocation?.coordinate.longitude else { return }
+    presenter.getWeather(lat: "\(lat)", lon: "\(lon)")
+    tableView.reloadData()
+  }
+  
   
 }
 
@@ -54,6 +73,8 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
   
 }
 
+
+//MARK: - MainViewProtocol
 extension MainVC: MainViewProtocol {
   
   func succes() {
@@ -65,4 +86,27 @@ extension MainVC: MainViewProtocol {
   }
   
 }
+
+// MARK: - Location
+extension MainVC: CLLocationManagerDelegate {
+  
+  private func setupLocation() {
+    locationManager.delegate = self
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    locationManager.requestWhenInUseAuthorization()
+    locationManager.startUpdatingLocation()
+    
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    if !locations.isEmpty, currentLocation == nil {
+      currentLocation = locations.first
+      locationManager.stopUpdatingLocation()
+    }
+  }
+  
+}
+
+
+
 

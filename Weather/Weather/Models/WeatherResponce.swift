@@ -8,21 +8,21 @@
 import UIKit
 
 struct Weather: Codable {
-  var icon: String
+  var icon: String?
 }
 
 struct TemperatureForDay: Codable {
-  var day: Double
+  var day: Double?
 }
 
 struct CurrentWeatherForecast: Codable {
-  var temp: Double
-  var weather: [Weather]
+  var temp: Double?
+  var weather: [Weather]?
 }
 
 struct HourlyWeatherForecast: Codable {
-  var temp: Double
-  var weather: [Weather]
+  var temp: Double?
+  var weather: [Weather]?
 }
 
 struct DailyWeatherForecast: Codable {
