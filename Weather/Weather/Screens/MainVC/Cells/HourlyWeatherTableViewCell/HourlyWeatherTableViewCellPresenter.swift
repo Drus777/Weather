@@ -1,18 +1,18 @@
 //
-//  MainViewPresenter.swift
+//  HourlyWeatherTableViewCellPresenter.swift
 //  Weather
 //
-//  Created by Andrey on 18.11.21.
+//  Created by Andrey on 19.11.21.
 //
 
 import Foundation
 
-protocol MainViewProtocol: AnyObject {
+protocol HourlyWeatherTableViewCellProtocol: AnyObject {
   func succes()
   func failure(error: Error)
 }
 
-protocol MainViewPresenterProtocol: AnyObject {
+protocol HourlyWeatherTableViewCellPresenterProtocol: AnyObject {
   var weather: WeatherResponce? { get set }
   
   func getWeather(lat: String, lon: String)
@@ -20,7 +20,7 @@ protocol MainViewPresenterProtocol: AnyObject {
 }
 
 class MainViewPresenter: MainViewPresenterProtocol {
- 
+  
   weak var view: MainViewProtocol?
   let networkService: NetworkServiceProtocol!
   var weather: WeatherResponce?
@@ -32,9 +32,7 @@ class MainViewPresenter: MainViewPresenterProtocol {
   
   func getWeather(lat: String, lon: String) {
     
-    let urlString = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely&units=metric&appid=8c23141abc3e7340df65c4aaf59dcdd1"
-    
-    networkService.load(urlString: urlString, model: WeatherResponce.self) {[weak self] result in
+    networkService.getWeather(lat: lat, lon: lon) {  [weak self] result in
       guard let self = self else { return }
       
       switch result {
@@ -44,8 +42,7 @@ class MainViewPresenter: MainViewPresenterProtocol {
       case .failure(let error):
         self.view?.failure(error: error)
       }
-      
-    }
+      }
 
   }
   

@@ -14,7 +14,7 @@ final class CurrentWeatherTableViewCell: UITableViewCell {
   static let cellName = "CurrentWeatherTableViewCell"  
   
   func setup(_ temperature: Double){
-    temperatureLabel.text = "\(temperature)"
+    temperatureLabel.text = "\(Int(temperature))°"
   }
   
 }
