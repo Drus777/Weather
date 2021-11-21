@@ -10,15 +10,11 @@ import UIKit
 class CityWeatherVC: UIViewController, CityWeatherProtocol {
   
   @IBOutlet private weak var tempLabel: UILabel!
+  @IBOutlet private weak var cityNameLabel: UILabel!
   @IBOutlet private weak var iconImageView: UIImageView!
   
   var presenter: CityWeatherPresenterProtocol?
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-  }
-  
+ 
   func succes() {
     
     guard
@@ -31,12 +27,12 @@ class CityWeatherVC: UIViewController, CityWeatherProtocol {
     else { return }
     tempLabel.text = "\(Int(temp))°"
     iconImageView.image = UIImage(named: icon)
-    self.navigationItem.title = cityName
+    cityNameLabel.text = cityName
   }
   
   func failure(error: Error) {
     DispatchQueue.main.async { [weak self] in
-      self?.tempLabel.text = "Неправильно введен город"
+      self?.cityNameLabel.text = "Неправильно введен город"
     }
     print(error.localizedDescription)
   }

@@ -12,7 +12,7 @@
         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="238" id="KGk-i7-Jjw" customClass="CurrentWeatherTableViewCell" customModule="Weather" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="454" height="238"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
                 <rect key="frame" x="0.0" y="0.0" width="454" height="238"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>

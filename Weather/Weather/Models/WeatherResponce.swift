@@ -12,7 +12,8 @@ struct Weather: Codable {
 }
 
 struct TemperatureForDay: Codable {
-  var day: Double?
+  var min: Double?
+  var max: Double?
 }
 
 struct CurrentWeatherForecast: Codable {
@@ -27,7 +28,9 @@ struct HourlyWeatherForecast: Codable {
 }
 
 struct DailyWeatherForecast: Codable {
-  var temp: TemperatureForDay
+  var dt: Int?
+  var temp: TemperatureForDay?
+  var weather: [Weather]?
 }
 
 struct WeatherResponce: Codable {
