@@ -5,7 +5,7 @@
 //  Created by Andrey on 18.11.21.
 //
 
-import UIKit
+import Foundation
 
 struct Weather: Codable {
   var icon: String?
@@ -21,7 +21,7 @@ struct CurrentWeatherForecast: Codable {
 }
 
 struct HourlyWeatherForecast: Codable {
-  var dt: Int
+  var dt: Int?
   var temp: Double?
   var weather: [Weather]?
 }

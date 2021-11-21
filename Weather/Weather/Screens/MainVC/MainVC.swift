@@ -8,11 +8,11 @@
 
 import UIKit
 
-final class MainVC: UIViewController, HourlyWeatherTableViewCellDelegate {
+final class MainVC: UIViewController {
   
   @IBOutlet private weak var tableView: UITableView!
   
-  var presenter: MainViewPresenterProtocol!
+  var presenter: MainViewPresenterProtocol?
   
   private let locationService = LocationService.shared
   
@@ -20,7 +20,9 @@ final class MainVC: UIViewController, HourlyWeatherTableViewCellDelegate {
     super.viewDidLoad()
     
     getWeatherWithLocation()
+    setupItem()
     setupTableView()
+    
   }
   
   private func setupTableView() {
@@ -31,15 +33,47 @@ final class MainVC: UIViewController, HourlyWeatherTableViewCellDelegate {
     tableView.delegate = self
   }
   
+  
+  private func setupItem(){
+    
+    self.navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(setupAlert(param:))), animated: true)
+    
+  }
+  
+  @objc func setupAlert(param: UIBarButtonItem) {
+    
+    let alert = UIAlertController(title: "Введите город", message: "", preferredStyle: .alert)
+    
+    alert.addTextField { field in
+      field.placeholder = "Город"
+      field.returnKeyType = .continue
+      field.keyboardType = .default
+    }
+    
+    let okButton = UIAlertAction(title: "Ok", style: .default) { _ in
+      
+      guard let fields = alert.textFields, fields.count == 1 else { return }
+      let field = fields[0]
+      guard let cityField = field.text, !cityField.isEmpty else { return }
+     
+      let nextVC = ModuleBuilder.createCityWeatherModul(cityName: cityField)
+      self.navigationController?.pushViewController(nextVC, animated: true)
+     
+    }
+    let cancelButton = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+      self.navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
+    alert.addAction(okButton)
+    alert.addAction(cancelButton)
+    navigationController?.present(alert, animated: true, completion: nil)
+  }
+  
   func getWeatherWithLocation() {
     let lat = locationService.lat
     let lon = locationService.lng
-    presenter.getWeather(lat: "\(lat)", lon: "\(lon)")
+    presenter?.getWeather(lat: "\(lat)", lon: "\(lon)")
     tableView.reloadData()
-  }
-  
-  func getWeatherResponce() -> WeatherResponce? {
-    return presenter.weather
   }
   
 }
@@ -63,7 +97,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     case 0:
       guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrentWeatherTableViewCell.cellName, for: indexPath) as? CurrentWeatherTableViewCell else { return UITableViewCell() }
       
-      if let temp = presenter.weather?.current.temp {
+      if let temp = presenter?.weather?.current.temp {
         cell.setup(temp)
       }
       
@@ -71,7 +105,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     case 1:
       guard let cell = tableView.dequeueReusableCell(withIdentifier: HourlyWeatherTableViewCell.cellName, for: indexPath) as? HourlyWeatherTableViewCell else { return UITableViewCell() }
       
-      cell.configuration(with: presenter.weather)
+      cell.configuration(with: presenter?.weather)
       
       return cell
     default:

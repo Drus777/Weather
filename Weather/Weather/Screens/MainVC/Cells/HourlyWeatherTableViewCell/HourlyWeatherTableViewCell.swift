@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol HourlyWeatherTableViewCellDelegate: AnyObject {
-  func getWeatherResponce() -> WeatherResponce?
-}
-
 class HourlyWeatherTableViewCell: UITableViewCell {
 
   @IBOutlet private weak var collectionView: UICollectionView!

@@ -18,7 +18,8 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
   
   func setup(_ weather: [HourlyWeatherForecast], index: Int){
     let hourlyWeather = weather[0...6]
-    let date = Date(timeIntervalSince1970: TimeInterval(hourlyWeather[index].dt))
+    guard let time = hourlyWeather[index].dt else  {return }
+    let date = Date(timeIntervalSince1970: TimeInterval(time))
     let dateformater = DateFormatter()
     dateformater.dateFormat = "HH"
     let dateString = dateformater.string(from: date)
