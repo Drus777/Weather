@@ -20,27 +20,6 @@ class HourlyWeatherTableViewCell: UITableViewCell {
     }
   }
   
-//  private var weather: WeatherResponce? {
-//    didSet{
-//
-////      if weather != nil {
-////
-////        let fetchRequest: NSFetchRequest<HourlyWeather> = HourlyWeather.fetchRequest()
-////        if let data = try? CoreDataService.shared.managedObjectContext.fetch(fetchRequest) {
-////          data.forEach{ CoreDataService.shared.managedObjectContext.delete($0) }
-////          CoreDataService.shared.saveContext()
-////        }
-////
-////        saveCurrentWetaherToCoreData()
-////        saveHourlyWeatherToCoreData()
-////
-////      }
-//
-////      fetchData()
-//
-//    }
-//  }
-  
   override func awakeFromNib() {
     super.awakeFromNib()
     collectionView.dataSource = self
@@ -51,46 +30,6 @@ class HourlyWeatherTableViewCell: UITableViewCell {
   func configuration(with weather: [HourlyWeather]) {
     self.weatherData = weather
   }
-  
-  // MARK: - CoreData
-  
-//  private func saveHourlyWeatherToCoreData(){
-//    for i in 0...6 {
-//      let hourlyWeatherData = HourlyWeather(moc: CoreDataService.shared.managedObjectContext)
-//      
-//      guard
-//        let hourlyTemp = weather?.hourly[i].temp,
-//        let time = weather?.hourly[i].dt,
-//        let icon = weather?.hourly[i].weather?[0].icon
-//      else { return }
-//      
-//      hourlyWeatherData?.hourlyTemp = "\(Int(hourlyTemp))"
-//      hourlyWeatherData?.time = Int64(time)
-//      hourlyWeatherData?.icon = "\(icon)"
-//      CoreDataService.shared.saveContext()
-//    }
-//  }
-  
-//  private func saveCurrentWetaherToCoreData() {
-//    let hourlyWeatherData = HourlyWeather(moc: CoreDataService.shared.managedObjectContext)
-//    
-//    guard  let currentTemp = weather?.current.temp else { return }
-//    hourlyWeatherData?.currentTemp = "\(Int(currentTemp))"
-//    CoreDataService.shared.saveContext()
-//  }
-  
-  
-//  private func fetchData() {
-//
-//    let fetchRequest: NSFetchRequest<HourlyWeather> = HourlyWeather.fetchRequest()
-//
-//    do {
-//      let results = try CoreDataService.shared.managedObjectContext.fetch(fetchRequest)
-//      weatherData = results
-//    } catch {
-//      print(error.localizedDescription)
-//    }
-//  }
   
 }
 

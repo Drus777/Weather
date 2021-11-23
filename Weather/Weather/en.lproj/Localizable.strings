@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  Weather
+
+  Created by Andrey on 23.11.21.
+  
+*/
+
+"enter_city" = "Enter city";
+"city" = "City";
+"min" = "min";
+"h" = "h";
+"d" = "d";
+"no_internet" = "No internet connrction";
+"data_is_out" = "Data is out of date by";
+"city_entered_incorreclty" = "City entered incorreclty";
+

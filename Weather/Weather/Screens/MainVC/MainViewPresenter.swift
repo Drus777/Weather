@@ -25,14 +25,13 @@ protocol MainViewPresenterProtocol: AnyObject {
 class MainViewPresenter: MainViewPresenterProtocol {
   
   weak var view: MainViewProtocol?
+  
   let networkService: NetworkServiceProtocol!
-  let shared = CoreDataService.shared
+  private let coreDataService = CoreDataService.shared
   
   var weather: WeatherResponce? {
     didSet {
-      
       if weather != nil {
-        
         deleteData()
         saveHourlyWeatherToCoreData()
         saveDailyWetaherToCoreData()
@@ -72,7 +71,7 @@ class MainViewPresenter: MainViewPresenterProtocol {
   
   private func saveHourlyWeatherToCoreData(){
     for i in 0...6 {
-      let hourlyWeather = HourlyWeather(moc: shared.managedObjectContext)
+      let hourlyWeather = HourlyWeather(moc: coreDataService.managedObjectContext)
       
       guard
         let hourlyTemp = weather?.hourly[i].temp,
@@ -85,14 +84,17 @@ class MainViewPresenter: MainViewPresenterProtocol {
       hourlyWeather?.time = Int64(time)
       hourlyWeather?.icon = "\(icon)"
       hourlyWeather?.currentTemp  = "\(Int(currentTemp))"
-      shared.saveContext()
+      coreDataService.saveContext()
     }
   }
   
   private func saveDailyWetaherToCoreData() {
     
+    let defaults = UserDefaults.standard
+    let date = Date()
+    
     weather?.daily.forEach({ weather in
-      let dailyWeather = DailyWeather(moc: shared.managedObjectContext)
+      let dailyWeather = DailyWeather(moc: coreDataService.managedObjectContext)
       
       guard
         let day = weather.dt,
@@ -105,7 +107,10 @@ class MainViewPresenter: MainViewPresenterProtocol {
       dailyWeather?.icon = icon
       dailyWeather?.maxTemp = "\(Int(maxTemp))"
       dailyWeather?.minTemp = "\(Int(minTemp))"
-      shared.saveContext()
+      
+      defaults.setValue(date, forKey: "date")
+      
+      coreDataService.saveContext()
     })
     
   }
@@ -115,8 +120,8 @@ class MainViewPresenter: MainViewPresenterProtocol {
     let hourlyFetchRequest: NSFetchRequest<HourlyWeather> = HourlyWeather.fetchRequest()
     let dailyFetchRequest: NSFetchRequest<DailyWeather> = DailyWeather.fetchRequest()
     do {
-      let hourlyResults = try shared.managedObjectContext.fetch(hourlyFetchRequest)
-      let dailyResults = try shared.managedObjectContext.fetch(dailyFetchRequest)
+      let hourlyResults = try coreDataService.managedObjectContext.fetch(hourlyFetchRequest)
+      let dailyResults = try coreDataService.managedObjectContext.fetch(dailyFetchRequest)
       hourlyWeatherData = hourlyResults
       dailyWeatherData = dailyResults
     } catch {
@@ -129,11 +134,11 @@ class MainViewPresenter: MainViewPresenterProtocol {
     let dailyFetchRequest: NSFetchRequest<DailyWeather> = DailyWeather.fetchRequest()
     
     guard
-      let hourlyData = try? shared.managedObjectContext.fetch(hourlyFetchRequest),
-      let dailyData = try? shared.managedObjectContext.fetch(dailyFetchRequest)
+      let hourlyData = try? coreDataService.managedObjectContext.fetch(hourlyFetchRequest),
+      let dailyData = try? coreDataService.managedObjectContext.fetch(dailyFetchRequest)
     else { return }
-    hourlyData.forEach{ shared.managedObjectContext.delete($0) }
-    dailyData.forEach{ shared.managedObjectContext.delete($0) }
+    hourlyData.forEach{ coreDataService.managedObjectContext.delete($0) }
+    dailyData.forEach{ coreDataService.managedObjectContext.delete($0) }
     CoreDataService.shared.saveContext()
   }
   

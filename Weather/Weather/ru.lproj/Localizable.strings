@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  Weather
+
+  Created by Andrey on 23.11.21.
+  
+*/
+
+"enter_city" = "Введите город";
+"city" = "Город";
+"min" = "мин.";
+"h" = "ч.";
+"d" = "д.";
+"no_internet" = "Нет интернет соединения";
+"data_is_out" = "Данные устарели на";
+"city_entered_incorreclty" = "Неправильно введен город";

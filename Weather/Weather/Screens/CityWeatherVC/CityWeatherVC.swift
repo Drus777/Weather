@@ -14,6 +14,8 @@ class CityWeatherVC: UIViewController, CityWeatherProtocol {
   @IBOutlet private weak var iconImageView: UIImageView!
   
   var presenter: CityWeatherPresenterProtocol?
+  
+  private let language = NSLocale.preferredLanguages[0]
  
   func succes() {
     
@@ -25,6 +27,12 @@ class CityWeatherVC: UIViewController, CityWeatherProtocol {
       let icon = weather.weather[0].icon,
       let cityName = weather.name
     else { return }
+    
+    if language == "en" {
+      let pharyngates = temp * 1.8 + 32
+      tempLabel.text = "\(pharyngates)°"
+    }
+    
     tempLabel.text = "\(Int(temp))°"
     iconImageView.image = UIImage(named: icon)
     cityNameLabel.text = cityName
@@ -32,7 +40,7 @@ class CityWeatherVC: UIViewController, CityWeatherProtocol {
   
   func failure(error: Error) {
     DispatchQueue.main.async { [weak self] in
-      self?.cityNameLabel.text = "Неправильно введен город"
+      self?.cityNameLabel.text = "city_entered_incorreclty".localized
     }
     print(error.localizedDescription)
   }

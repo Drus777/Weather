@@ -13,6 +13,7 @@ final class MainVC: UIViewController {
   @IBOutlet private weak var tableView: UITableView!
   
   var presenter: MainViewPresenterProtocol?
+  private var timer: Timer?
   
   private let locationService = LocationService.shared
   
@@ -23,6 +24,16 @@ final class MainVC: UIViewController {
     setupItem()
     setupTableView()
     
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    timer?.invalidate()
+    timer = Timer.scheduledTimer(withTimeInterval: 1.8, repeats: false, block: { [weak self] _ in
+      if self?.presenter?.weather == nil {
+        self?.setupInfoAlert()
+      }
+    })
   }
   
   private func setupTableView() {
@@ -43,10 +54,10 @@ final class MainVC: UIViewController {
   
   @objc func setupAlert(param: UIBarButtonItem) {
     
-    let alert = UIAlertController(title: "Введите город", message: "", preferredStyle: .alert)
+    let alert = UIAlertController(title: "enter_city".localized, message: "", preferredStyle: .alert)
     
     alert.addTextField { field in
-      field.placeholder = "Город"
+      field.placeholder = "city".localized
       field.returnKeyType = .continue
       field.keyboardType = .default
     }
@@ -67,6 +78,28 @@ final class MainVC: UIViewController {
     
     alert.addAction(okButton)
     alert.addAction(cancelButton)
+    navigationController?.present(alert, animated: true, completion: nil)
+  }
+  
+  private func setupInfoAlert(){
+    let defaults = UserDefaults.standard
+    guard let date = defaults.object(forKey: "date") as? Date else { return }
+    
+    let difference = Date().timeIntervalSince1970 - date.timeIntervalSince1970
+    var result = ""
+    if difference < 3600 {
+      result = "\(Int(difference / 60)) " + "min".localized
+    } else if difference < 43200 {
+      result = "\(Int(difference / 3600)) " + "h".localized
+    } else {
+      result = "\(Int(difference / 43200)) " + "d".localized
+    }
+ 
+    let alert = UIAlertController(title: "no_internet".localized, message: "data_is_out".localized + " \(result)", preferredStyle: .alert)
+    let okButton = UIAlertAction(title: "Ok", style: .default) { _ in
+      self.navigationController?.dismiss(animated: true, completion: nil)
+    }
+    alert.addAction(okButton)
     navigationController?.present(alert, animated: true, completion: nil)
   }
   
@@ -140,7 +173,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
       return UIScreen.main.bounds.height / 5
     }
     if indexPath.section == 2 {
-      return 80
+      return 85
     }
     return UIScreen.main.bounds.height / 3
   }
