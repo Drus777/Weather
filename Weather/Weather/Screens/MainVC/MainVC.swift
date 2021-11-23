@@ -94,7 +94,7 @@ final class MainVC: UIViewController {
     } else {
       result = "\(Int(difference / 43200)) " + "d".localized
     }
- 
+    
     let alert = UIAlertController(title: "no_internet".localized, message: "data_is_out".localized + " \(result)", preferredStyle: .alert)
     let okButton = UIAlertAction(title: "Ok", style: .default) { _ in
       self.navigationController?.dismiss(animated: true, completion: nil)
@@ -130,7 +130,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     return 1
   }
   
-  
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
     switch indexPath.section {
@@ -143,7 +142,7 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
       if !presenter.hourlyWeatherData.isEmpty {
         cell.setup(presenter.hourlyWeatherData)
       }
-        
+      
       return cell
       
     case 1:
@@ -163,7 +162,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     default:
       break
     }
-    
     
     return UITableViewCell()
   }
@@ -186,7 +184,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
   }
   
 }
-
 
 //MARK: - MainViewProtocol
 extension MainVC: MainViewProtocol {
