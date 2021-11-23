@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class HourlyWeatherCollectionViewCell: UICollectionViewCell {
   
@@ -15,26 +16,25 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
   
   static let cellName = "HourlyWeatherCollectionViewCell"
   
+  func setup(_ weatherData: [HourlyWeather], index: Int){
   
-  func setup(_ weather: [HourlyWeatherForecast], index: Int){
-    let hourlyWeather = weather[0...6]
-    guard let time = hourlyWeather[index].dt else  {return }
-    let date = Date(timeIntervalSince1970: TimeInterval(time))
+    guard
+      let temp = weatherData[index].value(forKey: "hourlyTemp"),
+      let time = weatherData[index].value(forKey: "time"),
+      let icon = weatherData[index].value(forKey: "icon")
+    else { return }
+    
+    let date = Date(timeIntervalSince1970: TimeInterval(time as! Int))
     let dateformater = DateFormatter()
     dateformater.dateFormat = "HH"
     let dateString = dateformater.string(from: date)
-    
-    guard
-      let temp = weather[index].temp,
-      let weatherInfo = weather[index].weather,
-      let icon =  weatherInfo[0].icon
-    else { return }
+    if let icon = icon as? String{
+      iconImageView.image = UIImage(named: icon)
+      tempLabel.text = "\(temp)°"
+    }
     
     timeLabel.text = dateString
-    tempLabel.text = "\(Int(temp))°"
-    iconImageView.image = UIImage(named: icon)
+    
   }
-  
-  
   
 }

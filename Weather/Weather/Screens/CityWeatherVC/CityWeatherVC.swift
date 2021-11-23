@@ -37,8 +37,6 @@ class CityWeatherVC: UIViewController, CityWeatherProtocol {
     print(error.localizedDescription)
   }
   
-  
-  
 }
 
 

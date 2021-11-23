@@ -56,10 +56,10 @@ final class MainVC: UIViewController {
       guard let fields = alert.textFields, fields.count == 1 else { return }
       let field = fields[0]
       guard let cityField = field.text, !cityField.isEmpty else { return }
-     
+      
       let nextVC = ModuleBuilder.createCityWeatherModul(cityName: cityField)
       self.navigationController?.pushViewController(nextVC, animated: true)
-     
+      
     }
     let cancelButton = UIAlertAction(title: "Cancel", style: .cancel) { _ in
       self.navigationController?.dismiss(animated: true, completion: nil)
@@ -89,12 +89,9 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     
     if section == 2 {
-      guard
-            let presenter = presenter,
-            let weather = presenter.weather
-      else { return 0}
+      guard let presenter = presenter else { return 0}
       
-      return weather.daily.count
+      return presenter.dailyWeatherData.count
     }
     
     return 1
@@ -108,20 +105,26 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     case 0:
       guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrentWeatherTableViewCell.cellName, for: indexPath) as? CurrentWeatherTableViewCell else { return UITableViewCell() }
       
-      if let temp = presenter?.weather?.current.temp {
-        cell.setup(temp)
+      guard let presenter = presenter else { return UITableViewCell() }
+      
+      if !presenter.hourlyWeatherData.isEmpty {
+        cell.setup(presenter.hourlyWeatherData)
       }
+        
       return cell
       
     case 1:
       guard let cell = tableView.dequeueReusableCell(withIdentifier: HourlyWeatherTableViewCell.cellName, for: indexPath) as? HourlyWeatherTableViewCell else { return UITableViewCell() }
       
-      cell.configuration(with: presenter?.weather)
+      guard let presenter = presenter else { return UITableViewCell()}
+      cell.configuration(with: presenter.hourlyWeatherData)
       return cell
       
     case 2:
       guard let cell = tableView.dequeueReusableCell(withIdentifier: DailyWeatherTableViewCell.cellName, for: indexPath) as? DailyWeatherTableViewCell else { return UITableViewCell() }
-      cell.setup(presenter?.weather, index: indexPath.row)
+      
+      guard let presenter = presenter else { return UITableViewCell()}
+      cell.setup(presenter.dailyWeatherData, index: indexPath.row)
       return cell
       
     default:

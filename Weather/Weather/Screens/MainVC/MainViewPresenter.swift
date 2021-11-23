@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 protocol MainViewProtocol: AnyObject {
   func succes()
@@ -14,20 +15,39 @@ protocol MainViewProtocol: AnyObject {
 
 protocol MainViewPresenterProtocol: AnyObject {
   var weather: WeatherResponce? { get set }
+  var hourlyWeatherData: [HourlyWeather] { get set }
+  var dailyWeatherData: [DailyWeather] { get set }
   
   func getWeather(lat: String, lon: String)
   init(view: MainViewProtocol, networkService: NetworkServiceProtocol)
 }
 
 class MainViewPresenter: MainViewPresenterProtocol {
- 
+  
   weak var view: MainViewProtocol?
   let networkService: NetworkServiceProtocol!
-  var weather: WeatherResponce?
+  let shared = CoreDataService.shared
+  
+  var weather: WeatherResponce? {
+    didSet {
+      
+      if weather != nil {
+        
+        deleteData()
+        saveHourlyWeatherToCoreData()
+        saveDailyWetaherToCoreData()
+        fetchData()
+      } 
+    }
+  }
+  
+  var hourlyWeatherData: [HourlyWeather] = []
+  var dailyWeatherData: [DailyWeather] = []
   
   required init(view: MainViewProtocol, networkService: NetworkServiceProtocol) {
     self.view = view
     self.networkService = networkService
+    
   }
   
   func getWeather(lat: String, lon: String) {
@@ -44,9 +64,77 @@ class MainViewPresenter: MainViewPresenterProtocol {
       case .failure(let error):
         self.view?.failure(error: error)
       }
-      
     }
-
+    
+  }
+  
+  // MARK: - CoreData
+  
+  private func saveHourlyWeatherToCoreData(){
+    for i in 0...6 {
+      let hourlyWeather = HourlyWeather(moc: shared.managedObjectContext)
+      
+      guard
+        let hourlyTemp = weather?.hourly[i].temp,
+        let time = weather?.hourly[i].dt,
+        let icon = weather?.hourly[i].weather?[0].icon,
+        let currentTemp = weather?.current.temp
+      else { return }
+      
+      hourlyWeather?.hourlyTemp = "\(Int(hourlyTemp))"
+      hourlyWeather?.time = Int64(time)
+      hourlyWeather?.icon = "\(icon)"
+      hourlyWeather?.currentTemp  = "\(Int(currentTemp))"
+      shared.saveContext()
+    }
+  }
+  
+  private func saveDailyWetaherToCoreData() {
+    
+    weather?.daily.forEach({ weather in
+      let dailyWeather = DailyWeather(moc: shared.managedObjectContext)
+      
+      guard
+        let day = weather.dt,
+        let icon = weather.weather?[0].icon,
+        let maxTemp = weather.temp?.max,
+        let minTemp = weather.temp?.min
+      else { return }
+      
+      dailyWeather?.day = Int64(day)
+      dailyWeather?.icon = icon
+      dailyWeather?.maxTemp = "\(Int(maxTemp))"
+      dailyWeather?.minTemp = "\(Int(minTemp))"
+      shared.saveContext()
+    })
+    
+  }
+  
+  func fetchData() {
+    
+    let hourlyFetchRequest: NSFetchRequest<HourlyWeather> = HourlyWeather.fetchRequest()
+    let dailyFetchRequest: NSFetchRequest<DailyWeather> = DailyWeather.fetchRequest()
+    do {
+      let hourlyResults = try shared.managedObjectContext.fetch(hourlyFetchRequest)
+      let dailyResults = try shared.managedObjectContext.fetch(dailyFetchRequest)
+      hourlyWeatherData = hourlyResults
+      dailyWeatherData = dailyResults
+    } catch {
+      print(error.localizedDescription)
+    }
+  }
+  
+  private func deleteData() {
+    let hourlyFetchRequest: NSFetchRequest<HourlyWeather> = HourlyWeather.fetchRequest()
+    let dailyFetchRequest: NSFetchRequest<DailyWeather> = DailyWeather.fetchRequest()
+    
+    guard
+      let hourlyData = try? shared.managedObjectContext.fetch(hourlyFetchRequest),
+      let dailyData = try? shared.managedObjectContext.fetch(dailyFetchRequest)
+    else { return }
+    hourlyData.forEach{ shared.managedObjectContext.delete($0) }
+    dailyData.forEach{ shared.managedObjectContext.delete($0) }
+    CoreDataService.shared.saveContext()
   }
   
 }

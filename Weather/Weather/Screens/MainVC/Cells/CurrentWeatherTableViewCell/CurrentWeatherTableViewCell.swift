@@ -13,8 +13,10 @@ final class CurrentWeatherTableViewCell: UITableViewCell {
   
   static let cellName = "CurrentWeatherTableViewCell"  
   
-  func setup(_ temperature: Double){
-    temperatureLabel.text = "\(Int(temperature))°"
+  func setup(_ temperature: [HourlyWeather]){
+    
+    guard let temp = temperature[0].currentTemp else { return }
+    temperatureLabel.text = "\(temp)°"
   }
   
 }

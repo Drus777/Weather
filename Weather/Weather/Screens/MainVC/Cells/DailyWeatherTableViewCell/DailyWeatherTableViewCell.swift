@@ -21,24 +21,22 @@ class DailyWeatherTableViewCell: UITableViewCell {
     // Initialization code
   }
   
-  func setup(_ weather: WeatherResponce?, index: Int){
+  func setup(_ weather: [DailyWeather], index: Int){
+
     guard
-          let weather = weather,
-          let day = weather.daily[index].dt,
-          let temp = weather.daily[index].temp,
-          let minTemp = temp.min,
-          let maxTemp = temp.max,
-          let icon = weather.daily[index].weather?[0].icon
+      let minTemp = weather[index].minTemp,
+          let maxTemp = weather[index].maxTemp,
+          let icon = weather[index].icon
     else { return }
     
-    let date = Date(timeIntervalSince1970: TimeInterval(day))
+    let date = Date(timeIntervalSince1970: TimeInterval(weather[index].day))
     let dateformater = DateFormatter()
     dateformater.dateFormat = "EE"
     let dateString = dateformater.string(from: date)
     
     dayLabel.text = dateString
-    minTempLabel.text = "min: \(Int(minTemp))°"
-    maxTempLabel.text = "max: \(Int(maxTemp))°"
+    minTempLabel.text = "min: \(minTemp)°"
+    maxTempLabel.text = "max: \(maxTemp)°"
     iconImageView.image = UIImage(named: icon)
     
   }

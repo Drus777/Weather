@@ -19,6 +19,7 @@ class ModuleBuilder: Builder {
     let networkService = NetworkService()
     let presenter = MainViewPresenter(view: view, networkService: networkService)
     view.presenter = presenter
+    presenter.fetchData()
     return view
   }
   
