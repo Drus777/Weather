@@ -8,6 +8,19 @@
 import Foundation
 import CoreData
 
+enum UrlString {
+  case location (lat: String, lon: String)
+  
+  static func setUrlString(_ location: UrlString) -> String{
+    
+    switch location {
+    case .location(let lat, let lon):
+      return "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely&units=metric&appid=8c23141abc3e7340df65c4aaf59dcdd1"
+    }
+    
+  }
+}
+
 protocol MainViewProtocol: AnyObject {
   func succes()
   func failure(error: Error)
@@ -51,8 +64,7 @@ class MainViewPresenter: MainViewPresenterProtocol {
   
   func getWeather(lat: String, lon: String) {
     
-    let urlString = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely&units=metric&appid=8c23141abc3e7340df65c4aaf59dcdd1"
-    
+    let urlString = UrlString.setUrlString(.location(lat: lat, lon: lon))
     networkService.load(urlString: urlString, model: WeatherResponce.self) {[weak self] result in
       guard let self = self else { return }
       

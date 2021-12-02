@@ -29,11 +29,12 @@ class CityWeatherVC: UIViewController, CityWeatherProtocol {
     else { return }
     
     if language == "en" {
-      let pharyngates = temp * 1.8 + 32
+      let pharyngates = Int(temp * 1.8 + 32)
       tempLabel.text = "\(pharyngates)°"
+    } else {
+      tempLabel.text = "\(Int(temp))°"
     }
     
-    tempLabel.text = "\(Int(temp))°"
     iconImageView.image = UIImage(named: icon)
     cityNameLabel.text = cityName
   }

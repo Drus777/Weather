@@ -7,6 +7,19 @@
 
 import Foundation
 
+enum CityUrlString {
+  case cityName (String)
+  
+  static func setUrlString(_ city: CityUrlString) -> String{
+    
+    switch city {
+    case .cityName(let cityName):
+      return "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&units=metric&appid=8c23141abc3e7340df65c4aaf59dcdd1"
+    }
+    
+  }
+}
+
 protocol CityWeatherProtocol: AnyObject {
   func succes()
   func failure(error: Error)
@@ -37,8 +50,7 @@ class CityWeatherPresenter: CityWeatherPresenterProtocol {
   func getWeather() {
     
     guard let cityName = cityName else { return }
-    let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&units=metric&appid=8c23141abc3e7340df65c4aaf59dcdd1"
-    
+    let urlString = CityUrlString.setUrlString(.cityName(cityName))
     networkService.load(urlString: urlString, model: CurrentWeatherResponce.self) {[weak self] result in
       guard let self = self else { return }
       

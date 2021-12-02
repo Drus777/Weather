@@ -11,6 +11,7 @@ protocol NetworkServiceProtocol {
   func load<T: Codable>(urlString: String, model: T.Type, completion: @escaping (Result<T?, Error>) -> Void)
 }
 
+
 final class NetworkService: NetworkServiceProtocol {
   
   func load<T: Codable>(urlString: String, model: T.Type, completion: @escaping (Result<T?, Error>) -> Void) {
